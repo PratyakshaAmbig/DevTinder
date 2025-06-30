@@ -1,43 +1,93 @@
 const express = require("express");
 const { adminAuth, userAuth } = require("./middlewares/auth");
+const connectDB = require("./config/database");
+const User = require("./models/user");
 
 // I am creating express js application
 const app = express();
 
-app.get('/getUserData',(req, res)=>{
+// It will take json data from the request and convert that data into javascript object and add the javascript object into request object
+app.use(express.json());
+
+app.post('/signup', async(req, res)=>{
      try {
-       throw new Error("dcgdghcjs");
-       res.send("User data sent successfully...")
+     console.log(req.body);
+     // Creating the new Instance of User Model
+     const user = new User(req.body)
+     const data = await user.save();
+     res.send("User added Successfully.")
      } catch (error) {
-          res.status(500).send('Some thing went wrong please contact your team')
+          res.status(400).send("Error Saving the user",error.message)
      }
 })
 
-// Handle Auth Middleware for all request GET, POST, DELETE, PATCH, PUT
-app.use('/admin', adminAuth)
-
-app.get('/user',userAuth, (req, res)=>{
-     res.send('User data sent.')
+// Get user details based on email
+app.get('/user', async(req,res)=>{
+     const userEmail = req.body.emailId;
+     try {
+          const user = await User.findOne({emailId:userEmail});
+          if(!user){
+               res.status(404).send("User Not found!")
+          }else{
+               res.send(user)
+          }
+          // if(users.length === 0){
+          //      res.status(404).send("User not found!")
+          // }else{
+          //      res.send(users);
+          // }
+     } catch (error) {
+          res.status(400).send('Something went wrong')
+     }
 })
-
-app.get('/admin/getAllData',(req, res)=>{
-     res.send("All data sent")
-})
-
-app.get('/admin/deleteData', (req, res)=>{
-     res.send("Data is deleted..")
-})
-
-// We have to handle the error gracfully for all the routes
-app.use('/', (err,req,res,next)=>{
-     if(err){
-          console.log(err)
-          res.status(500).send("Something went wrong...")
-     }else{
-          next();
+// Feed API - GET -> /feed  => Get all the Users from the database
+app.get('/feed', async(req,res)=>{
+     try {
+          const allUsers = await User.find();
+          res.send(allUsers)
+     } catch (error) {
+          res.status(400).send("Something went wrong")
      }
 })
 
-app.listen(7777, ()=>{
-    console.log("Server is successfully listening on port 7777")
+// Delete a User based in Id
+app.delete('/user', async(req, res)=>{
+     const userId = req.body.userId;
+     try {
+          // const user = await User.findByIdAndDelete({_id:userId})
+          const user = await User.findByIdAndDelete(userId)
+          if(!user){
+               res.status(404).send("User not found!")
+          }else{
+               res.send("User deleted Sucessfully!")
+          }
+     } catch (error) {
+          res.status(400).send("Something went wrong")
+     }
 })
+
+// Update data of the user
+app.patch('/user', async(req, res)=>{
+     const userId = req.body.userId;
+     const emailId = req.body.emailId;
+     const data = req.body;
+     try {
+          // const user = await User.findByIdAndUpdate(userId, data, {returnDocument:"after"});
+          // const user = await User.findByIdAndUpdate({_id:userId}, data, {returnDocument:"after"});
+          const user = await User.findOneAndUpdate({emailId},data, {returnDocument:'after'})
+
+          return res.json({message:"User data Updated", user});
+     } catch (error) {
+         res.status(400).send("Something went wrong") 
+     }
+})
+
+connectDB().then(() => {
+     console.log("Database connection Successfully!")
+     app.listen(7777, () => {
+          console.log("Server is successfully listening on port 7777")
+     })
+}).catch((err) => {
+     console.error("Database can not be Connected!.")
+})
+
