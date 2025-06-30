@@ -11,13 +11,12 @@ app.use(express.json());
 
 app.post('/signup', async(req, res)=>{
      try {
-     console.log(req.body);
      // Creating the new Instance of User Model
      const user = new User(req.body)
      const data = await user.save();
      res.send("User added Successfully.")
      } catch (error) {
-          res.status(400).send("Error Saving the user",error.message)
+          res.status(400).send("Error Saving the user" + error.message)
      }
 })
 
@@ -74,11 +73,14 @@ app.patch('/user', async(req, res)=>{
      try {
           // const user = await User.findByIdAndUpdate(userId, data, {returnDocument:"after"});
           // const user = await User.findByIdAndUpdate({_id:userId}, data, {returnDocument:"after"});
-          const user = await User.findOneAndUpdate({emailId},data, {returnDocument:'after'})
+          const user = await User.findOneAndUpdate({emailId},data, {
+               returnDocument:'after',
+               runValidators:true
+          })
 
           return res.json({message:"User data Updated", user});
      } catch (error) {
-         res.status(400).send("Something went wrong") 
+         res.status(400).send("Something went wrong" + error.message) 
      }
 })
 
