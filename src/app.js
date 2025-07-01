@@ -3,6 +3,7 @@ const { adminAuth, userAuth } = require("./middlewares/auth");
 const connectDB = require("./config/database");
 const User = require("./models/user");
 
+
 // I am creating express js application
 const app = express();
 
@@ -66,21 +67,36 @@ app.delete('/user', async(req, res)=>{
 })
 
 // Update data of the user
-app.patch('/user', async(req, res)=>{
-     const userId = req.body.userId;
+app.patch('/user/:userId', async(req, res)=>{
+     const userId = req.params?.userId;
      const emailId = req.body.emailId;
      const data = req.body;
+     const ALLOWED_UPDATES = ['photoUrl', 'about', 'gender', 'age', 'skills'];
+//      {
+//     "userId":"68629451a5811b4747ecd689",
+//     "emailId":"pratyakshaambig@gmail.com",
+//     "gender":"male",
+//     "skills":["javascript","node.js"]
+    
+// }
      try {
           // const user = await User.findByIdAndUpdate(userId, data, {returnDocument:"after"});
           // const user = await User.findByIdAndUpdate({_id:userId}, data, {returnDocument:"after"});
-          const user = await User.findOneAndUpdate({emailId},data, {
+          const isUpdateAllowed = Object.keys(data).every((k)=> ALLOWED_UPDATES.includes(k));
+         if(!isUpdateAllowed){
+          throw new Error("Updates not allowed!")
+         };
+         if(data?.skills.length > 10){
+          throw new Error("Skills cannot be more than 10")
+         }
+          const user = await User.findByIdAndUpdate(userId,data, {
                returnDocument:'after',
                runValidators:true
           })
 
           return res.json({message:"User data Updated", user});
      } catch (error) {
-         res.status(400).send("Something went wrong" + error.message) 
+         res.status(400).send("Update Failed :" + error.message) 
      }
 })
 
