@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -62,6 +64,22 @@ const userSchema = new mongoose.Schema({
         type:[String]
     }
 },{timestamps:true})
+
+
+// This is the schema method - reason of creating the this method is , this will specific to the this userschema , like generate token for the user, and validate the password in the user schema, it is very easy to debug
+userSchema.methods.getJWT = async function(){
+    // I'm refering to the user instance and this keyword will work only for the normal function
+    const user = this
+    const token = await jwt.sign({_id:user._id}, 'PVAmbig@1015',{expiresIn:'1d'});
+    return token
+} 
+
+userSchema.methods.validatePassword = async function(passwordInputByUser){
+    const user = this;
+    const hashedPassword = user?.password
+    const isPasswordValid = await bcrypt.compare(passwordInputByUser, hashedPassword);
+    return isPasswordValid;
+}
 
 const User = mongoose.model('User', userSchema);
 
