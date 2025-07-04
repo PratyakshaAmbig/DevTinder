@@ -3,6 +3,7 @@ const User = require("../models/user");
 const { validateLoginData, validateSignUpData } = require("../utils/validadtion");
 const authRouter = express.Router();
 const bcrypt = require("bcrypt");
+const validator = require("validator");
 
 authRouter.post('/signup', async(req, res)=>{
      try {
@@ -59,6 +60,30 @@ authRouter.post('/logout', async(req, res)=>{
         expires:new Date(Date.now())
     })
     res.send("Logout Successfully!!")
+});
+
+authRouter.patch('/changePassword', async(req, res)=>{
+     try {
+          const {password, emailId} = req.body;
+          if(!password || !emailId){
+               throw new Error("Please Provide the password and email")
+          }else if(!validator.isStrongPassword(password)){
+               throw new Error('Please enter string password')
+          }else if(!validator.isEmail(emailId)){
+               throw new Error("Email Id is not correct")
+          }
+          const findUser = await User.findOne({emailId});
+          if(!findUser){
+               throw new Error("User not found please Register!")
+          }
+          const hashedPassword = await bcrypt.hash(password,10);
+          const savePassword = await User.findOneAndUpdate({emailId},{password:hashedPassword},{
+               returnDocument:'after'
+          })
+          res.send('Password updated successfully!')
+     } catch (error) {
+          res.status(400).send("ERROR:" + error.message)
+     }
 })
 
 module.exports= authRouter

@@ -2,6 +2,9 @@ const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const { validaEditProfileData } = require("../utils/validadtion");
 const profileRouter = express.Router();
+const bcrypt = require("bcrypt");
+const User = require("../models/user");
+const validator = require("validator");
 
 profileRouter.get('/profile/view', userAuth, async(req, res)=>{
      try {
@@ -32,6 +35,26 @@ profileRouter.patch('/profile/edit', userAuth, async(req, res)=>{
         })
     } catch (error) {
         res.status(400).send('ERROR:'+ error.message)
+    }
+})
+
+profileRouter.patch('/updatePassword', userAuth, async(req,res)=>{
+    try {
+        const {_id} = req?.userData;
+        const {password} = req.body;
+        if(!password){
+            throw new Error("Password is required!")
+        }else if(!validator.isStrongPassword(password)){
+            throw new Error("Please enter the strong pasword!")
+        }
+        const hashedPassword = await bcrypt.hash(password,10);
+        const changePassword = await User.findByIdAndUpdate(_id,{password:hashedPassword});
+        if(changePassword){
+            res.send("Password Updated Successfully!")
+        }
+
+    } catch (error) {
+        res.status(400).send("ERROR:"+ error.message)
     }
 })
 
