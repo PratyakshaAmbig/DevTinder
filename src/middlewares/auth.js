@@ -11,7 +11,7 @@ exports.userAuth = async(req, res, next)=>{
           // Decode the token 
           const decodedToken = await jwt.verify(token, 'PVAmbig@1015');
           const {_id} = decodedToken
-          if(!decodedToken){
+          if(!_id){
                throw new Error("Invalid token!")
           }
           // Find the user
