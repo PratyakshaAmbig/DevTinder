@@ -16,6 +16,9 @@ const userSchema = new mongoose.Schema({
     emailId: {
         type: String,
         required:true,
+        // If i write unique is true then no need to add the index and moongose is automatically create in index
+        // Using Index we can optimize the query -> Like if there are 1000 users in our app, i have find perticular user using this email in our platform, i want to use the index or unique true using this index or unique we can optimize the query
+        // index:true
         unique:true,
         lowercase:true,
         trim:true,
@@ -40,6 +43,11 @@ const userSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
+        // enum:{
+        //     values:['male', 'female','others'],
+        //     message:`{VALUE} is not a valid gender type`
+        // },
+        // or below validate are custom validation and are enum validadtion
         // This validate function will only be called when new user is created or new document is created, it will not call in the update time like put and patch
         validate(value){
             if(!['male', 'female', 'others'].includes(value)){
