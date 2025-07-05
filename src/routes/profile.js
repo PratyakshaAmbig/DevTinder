@@ -41,13 +41,20 @@ profileRouter.patch('/profile/edit', userAuth, async(req, res)=>{
 profileRouter.patch('/updatePassword', userAuth, async(req,res)=>{
     try {
         const {_id} = req?.userData;
-        const {password} = req.body;
-        if(!password){
+        const {password,newPassword} = req.body;
+        const findUser = await User.findById(_id);
+
+        const isPasswordCorrect = await findUser.validatePassword(password);
+        console.log(isPasswordCorrect)
+        if(!isPasswordCorrect){
+            throw new Error("Invalid password")
+        }
+        if(!password || !newPassword){
             throw new Error("Password is required!")
-        }else if(!validator.isStrongPassword(password)){
+        }else if(!validator.isStrongPassword(newPassword)){
             throw new Error("Please enter the strong pasword!")
         }
-        const hashedPassword = await bcrypt.hash(password,10);
+        const hashedPassword = await bcrypt.hash(newPassword,10);
         const changePassword = await User.findByIdAndUpdate(_id,{password:hashedPassword});
         if(changePassword){
             res.send("Password Updated Successfully!")
