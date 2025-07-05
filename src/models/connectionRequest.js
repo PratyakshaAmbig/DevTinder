@@ -3,10 +3,12 @@ const mongoose = require("mongoose");
 const connectionRequestSchema = new mongoose.Schema({
     fromUserId:{
         type:mongoose.Schema.Types.ObjectId,
+        ref:'User', //This will refering to the User collection
         required:true
     },
     toUserId:{
         type:mongoose.Schema.Types.ObjectId,
+        ref:'User',
         required:true
     },
     status:{
@@ -23,6 +25,7 @@ const connectionRequestSchema = new mongoose.Schema({
 });
 
 // This is compound index
+// Job of index is - make our Query fast
 // I have write the compound index because inside the query i have to serach to fileds like frmUserId and to UserId
 // Suppose i find query using one filed then also i want to  use the compound index , or i have to use normal index is true
 // 1 is asending order and -1 is desending order

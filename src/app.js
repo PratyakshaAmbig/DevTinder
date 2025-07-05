@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
+const userRouter = require("./routes/user");
 
 
 // I am creating express js application
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use('/', authRouter);
 app.use('/', profileRouter);
 app.use('/', requestRouter)
+app.use('/', userRouter)
 
 // Get user details based on email
 app.get('/user', async(req,res)=>{
