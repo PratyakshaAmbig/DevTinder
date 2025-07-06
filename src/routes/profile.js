@@ -45,7 +45,6 @@ profileRouter.patch('/updatePassword', userAuth, async(req,res)=>{
         const findUser = await User.findById(_id);
 
         const isPasswordCorrect = await findUser.validatePassword(password);
-        console.log(isPasswordCorrect)
         if(!isPasswordCorrect){
             throw new Error("Invalid password")
         }
