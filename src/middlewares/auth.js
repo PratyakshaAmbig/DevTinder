@@ -6,7 +6,8 @@ exports.userAuth = async(req, res, next)=>{
           // Read the token from the cookies
           const {token} = req?.cookies;
           if(!token){
-               throw new Error("Token is required!")
+               // 401 -> Unauthorized
+               return res.status(401).send("Please login")
           }
           // Decode the token 
           const decodedToken = await jwt.verify(token, 'PVAmbig@1015');

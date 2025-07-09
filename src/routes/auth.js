@@ -24,7 +24,7 @@ authRouter.post('/signup', async(req, res)=>{
      const data = await user.save();
      res.send("User added Successfully.")
      } catch (error) {
-          res.status(400).send("ERROR:" + error.message)
+          res.status(400).send(error.message)
      }
 })
 
@@ -51,7 +51,7 @@ authRouter.post('/login', async(req, res)=>{
                res.send(user)
           }
      } catch (error) {
-          res.status(400).send("ERROR:"+ error.message)
+          res.status(400).send(error.message)
      }
 })
 

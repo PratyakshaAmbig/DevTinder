@@ -30,7 +30,7 @@ const validaEditProfileData = (req)=>{
             throw new Error('Invalid photo Url')
         }else if(req?.body?.skills?.length > 10){
             throw new Error('Skills cannot be more than 10')
-        }else if(req?.body?.age > 18){
+        }else if(!req?.body?.age > 18){
             throw new Error('Age sholud be 18 years')
         }
     }

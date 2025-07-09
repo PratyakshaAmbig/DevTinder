@@ -15,7 +15,8 @@ const app = express();
 app.use(cors({
      //Where your frontend hosted or we have whitlisted the frontend domains
      origin:'http://localhost:5173',
-     credentials:true
+     credentials:true,
+     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 }))
 // It will take json data from the request and convert that data into javascript object and add the javascript object into request object
 app.use(express.json());
