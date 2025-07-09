@@ -48,7 +48,7 @@ authRouter.post('/login', async(req, res)=>{
                const token = await user.getJWT();
                // Add the token to cookie and send the response to the user
                res.cookie('token',token, {expires: new Date(Date.now() + 8 * 3600000)})
-               res.send("Login Successfully!")
+               res.send(user)
           }
      } catch (error) {
           res.status(400).send("ERROR:"+ error.message)

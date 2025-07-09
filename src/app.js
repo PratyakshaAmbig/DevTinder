@@ -6,11 +6,17 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+const cors = require("cors");
 
 
 // I am creating express js application
 const app = express();
 
+app.use(cors({
+     //Where your frontend hosted or we have whitlisted the frontend domains
+     origin:'http://localhost:5173',
+     credentials:true
+}))
 // It will take json data from the request and convert that data into javascript object and add the javascript object into request object
 app.use(express.json());
 // when ever any request will come my cookies will parse and we can access that cookies, suppose i am not use the cookeparser middleware wecan get the cookies
