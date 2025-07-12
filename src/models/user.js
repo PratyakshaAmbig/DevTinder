@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
         // or below validate are custom validation and are enum validadtion
         // This validate function will only be called when new user is created or new document is created, it will not call in the update time like put and patch
         validate(value){
-            if(!['male', 'female', 'others'].includes(value)){
+            if(!['Male', 'Female', 'Others'].includes(value)){
                 throw new Error("Gender data is not valid")
             }
         }
