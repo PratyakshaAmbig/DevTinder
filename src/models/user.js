@@ -58,6 +58,7 @@ const userSchema = new mongoose.Schema({
     photoUrl:{
         type:String,
         default:"https://smsdelhibmw.co.in/wp-content/uploads/2022/02/User-Profile-PNG.png",
+        // this is the validation for userschema
         validate (value){
             if(!validator.isURL(value)){
                 throw new Error("Inavalid Photo URL" + value)
